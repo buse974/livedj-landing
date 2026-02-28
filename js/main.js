@@ -103,6 +103,7 @@ const state = {
   progressInterval: null,
   isLoading: false,
   isRerolling: false,
+  isPaused: false,
   pendingVideoId: null
 };
 
@@ -123,6 +124,8 @@ function cacheDom() {
   dom.btnPlay = $('#btn-play');
   dom.btnReroll = $('#btn-reroll');
   dom.btnNext = $('#btn-next');
+  dom.btnPause = $('#btn-pause');
+  dom.progressBar = $('#progress-bar');
   dom.btnOpenSettings = $('#btn-open-settings');
   dom.btnOpenSettingsPlayer = $('#btn-open-settings-player');
   dom.btnSaveSettings = $('#btn-save-settings');
@@ -434,6 +437,9 @@ window.onYouTubeIframeAPIReady = function () {
 
 function onPlayerStateChange(event) {
   if (event.data === YT.PlayerState.PLAYING) {
+    state.isPaused = false;
+    dom.btnPause.innerHTML = '&#9646;&#9646;';
+    dom.btnPause.title = 'Pause';
     startProgressTracking();
   }
   if (event.data === YT.PlayerState.ENDED) {
@@ -478,6 +484,32 @@ function bindEvents() {
   dom.formVibe.addEventListener('submit', (e) => {
     e.preventDefault();
     changeVibe(dom.inputVibePlayer.value);
+  });
+
+  // Pause / Play
+  dom.btnPause.addEventListener('click', () => {
+    if (!state.player || !state.ytReady) return;
+    if (state.isPaused) {
+      state.player.playVideo();
+      state.isPaused = false;
+      dom.btnPause.innerHTML = '&#9646;&#9646;';
+      dom.btnPause.title = 'Pause';
+    } else {
+      state.player.pauseVideo();
+      state.isPaused = true;
+      dom.btnPause.innerHTML = '&#9654;';
+      dom.btnPause.title = 'Lecture';
+    }
+  });
+
+  // Seek (clic sur la barre de progression)
+  dom.progressBar.addEventListener('click', (e) => {
+    if (!state.player || !state.ytReady) return;
+    const duration = state.player.getDuration();
+    if (!duration) return;
+    const rect = dom.progressBar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    state.player.seekTo(pct * duration, true);
   });
 
   // Next
