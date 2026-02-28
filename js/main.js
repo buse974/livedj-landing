@@ -52,18 +52,22 @@ const musicProviders = {
     searchIndex: 0,
 
     async search(token, track) {
-      const query = `${track.artist} ${track.title} ${track.year || ''} audio`;
+      const query = `${track.artist} - ${track.title}`;
       const url = new URL('https://www.googleapis.com/youtube/v3/search');
       url.searchParams.set('part', 'snippet');
       url.searchParams.set('q', query);
       url.searchParams.set('type', 'video');
-      url.searchParams.set('videoCategoryId', '10');
+      url.searchParams.set('videoEmbeddable', 'true');
       url.searchParams.set('maxResults', '5');
       url.searchParams.set('key', token);
 
       const res = await fetch(url);
       if (!res.ok) {
-        if (res.status === 403) throw new Error('TOKEN_INVALID');
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 403 && data.error?.errors?.[0]?.reason === 'quotaExceeded') {
+          throw new Error('QUOTA_EXCEEDED');
+        }
+        if (res.status === 400 || res.status === 403) throw new Error('TOKEN_INVALID');
         throw new Error(`YouTube API error ${res.status}`);
       }
 
@@ -389,6 +393,8 @@ function handleError(err) {
   if (err.message === 'TOKEN_INVALID') {
     alert('Clé API invalide. Vérifiez vos paramètres.');
     openSettings();
+  } else if (err.message === 'QUOTA_EXCEEDED') {
+    setNowPlaying(null, 'Quota YouTube épuisé pour aujourd\'hui');
   } else if (err.message === 'NO_RESULTS') {
     setNowPlaying(null, 'Aucun résultat YouTube. Essai suivant...');
     setTimeout(() => prefetchAndPlay(), 2000);
@@ -437,13 +443,19 @@ function onPlayerStateChange(event) {
 }
 
 function onPlayerError(event) {
-  console.warn('YouTube error:', event.data);
+  console.warn('YouTube player error:', event.data, '- trying fallback');
   const provider = musicProviders[state.config.musicProvider];
   const fallback = provider.getNextVideoId();
   if (fallback) {
     playVideoById(fallback);
   } else {
-    playNext();
+    // Tous les résultats ont échoué, on demande un autre morceau à l'IA
+    console.warn('All video results failed, asking AI for another track');
+    setNowPlaying(state.currentTrack, 'Vidéo indisponible, morceau suivant...');
+    setTimeout(() => {
+      clearInterval(state.progressInterval);
+      prefetchAndPlay();
+    }, 1000);
   }
 }
 
