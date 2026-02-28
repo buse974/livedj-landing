@@ -406,6 +406,17 @@ body {
   color: #555;
 }
 
+.setting-help {
+  font-size: 0.75rem;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.setting-help:hover {
+  color: #aaa;
+}
+
 .modal-actions {
   display: flex;
   gap: 0.8rem;
