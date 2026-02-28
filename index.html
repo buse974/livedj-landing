@@ -8,23 +8,96 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="/" class="logo">livedj</a>
-    </nav>
-  </header>
 
-  <main>
-    <section class="hero">
-      <h1>Bienvenue sur livedj</h1>
-      <p>DJ automatique piloté par l'IA.</p>
-    </section>
-  </main>
+  <!-- View: Home (style Google) -->
+  <section id="view-home" class="view">
+    <div class="home-content">
+      <h1 class="home-logo">livedj</h1>
+      <p class="home-tagline">Décris une ambiance. L'IA s'occupe du reste.</p>
+      <form id="form-home" class="home-form">
+        <input id="input-vibe-home" type="text" placeholder="Jazz nocturne dans un bar enfumé..." autocomplete="off">
+        <button type="submit" id="btn-play">PLAY</button>
+      </form>
+      <button id="btn-open-settings" class="link-btn" type="button">Paramètres</button>
+    </div>
+  </section>
 
-  <footer>
-    <p>&copy; 2026 livedj</p>
-  </footer>
+  <!-- View: Player -->
+  <section id="view-player" class="view hidden">
+    <div class="player-header">
+      <form id="form-vibe" class="vibe-bar">
+        <input id="input-vibe-player" type="text" placeholder="Changer d'ambiance..." autocomplete="off">
+        <button type="submit" class="vibe-btn">OK</button>
+      </form>
+      <button id="btn-open-settings-player" class="settings-btn" type="button" title="Paramètres">&#9881;</button>
+    </div>
 
+    <div class="now-playing">
+      <div id="now-status" class="now-status"></div>
+      <div id="now-title" class="now-title">---</div>
+      <div id="now-artist" class="now-artist">---</div>
+      <div id="now-year" class="now-year"></div>
+    </div>
+
+    <div class="progress-wrapper">
+      <span id="time-current" class="time">0:00</span>
+      <div class="progress-bar" id="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span id="time-total" class="time">0:00</span>
+    </div>
+
+    <div class="next-track" id="next-track-section">
+      <span class="next-label">Suivant</span>
+      <div class="next-info">
+        <span id="next-title">En attente...</span>
+        <span id="next-artist"></span>
+      </div>
+      <button id="btn-reroll" class="reroll-btn" type="button" title="Autre suggestion">&#8635;</button>
+    </div>
+  </section>
+
+  <!-- Modal: Settings -->
+  <div id="modal-settings" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <h2>Paramètres</h2>
+
+      <div class="setting-group">
+        <label for="select-ai-provider">IA Provider</label>
+        <select id="select-ai-provider">
+          <option value="claude">Claude (Anthropic)</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label for="input-ai-token">Clé API</label>
+        <input id="input-ai-token" type="password" placeholder="sk-ant-...">
+      </div>
+
+      <div class="setting-group">
+        <label for="select-music-provider">Source musicale</label>
+        <select id="select-music-provider">
+          <option value="youtube">YouTube</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label for="input-music-token">Clé YouTube API</label>
+        <input id="input-music-token" type="text" placeholder="AIza...">
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-save-settings" type="button">Sauvegarder</button>
+        <button id="btn-cancel-settings" type="button" class="btn-secondary">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Player (invisible) -->
+  <div id="yt-player" style="position:fixed;bottom:-100px;left:-100px;width:1px;height:1px;opacity:0;pointer-events:none;"></div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
