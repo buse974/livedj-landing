@@ -118,6 +118,7 @@ function cacheDom() {
   dom.inputVibePlayer = $('#input-vibe-player');
   dom.btnPlay = $('#btn-play');
   dom.btnReroll = $('#btn-reroll');
+  dom.btnNext = $('#btn-next');
   dom.btnOpenSettings = $('#btn-open-settings');
   dom.btnOpenSettingsPlayer = $('#btn-open-settings-player');
   dom.btnSaveSettings = $('#btn-save-settings');
@@ -465,6 +466,12 @@ function bindEvents() {
   dom.formVibe.addEventListener('submit', (e) => {
     e.preventDefault();
     changeVibe(dom.inputVibePlayer.value);
+  });
+
+  // Next
+  dom.btnNext.addEventListener('click', () => {
+    clearInterval(state.progressInterval);
+    playNext();
   });
 
   // Reroll

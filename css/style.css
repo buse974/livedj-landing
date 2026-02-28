@@ -262,6 +262,27 @@ body {
   transition: width 0.5s linear;
 }
 
+.next-btn {
+  background: none;
+  border: 1px solid #333;
+  color: #888;
+  font-size: 1.1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.next-btn:hover {
+  border-color: #555;
+  color: #fff;
+}
+
 /* Next Track */
 
 .next-track {
